@@ -51,7 +51,24 @@ for year, url in urls.items():
     if table:
         #convert table to pandas dataframe
         df = pd.read_html(StringIO(str(table)))[0]
+        
+        # Clean up columns
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = ['_'.join(col).strip() if 'Unnamed' not in col[0] else col[1] 
+                         for col in df.columns.values]
+            df.columns = [col.replace('_', ' ').strip() for col in df.columns]
+        
         df["Season"] = year # add year column
+        
+        # Remove all header rows from data 
+        if 'Tm' in df.columns:
+            # Remove rows where 'Tm' column contains header-like values
+            df = df[~df['Tm'].isin(['Tm', 'Team', 'Passing', 'Rushing', 'Fantasy'])]
+            numeric_cols = ['G', 'Cmp', 'Att', 'Yds', 'TD', 'Int', 'Att.1', 'Yds.1', 'TD.1']
+            for col in numeric_cols:
+                if col in df.columns:
+                    df = df[pd.to_numeric(df[col], errors='coerce').notna()]
+        
         dfs.append(df) # save table in list
         print(f"Table extracted for {year}, shape: {df.shape}")
     else:

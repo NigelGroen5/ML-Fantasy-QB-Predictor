@@ -1,5 +1,4 @@
-Unnamed: 0_level_0,Unnamed: 1_level_0,Passing,Passing,Passing,Passing,Passing,Unnamed: 7_level_0,Unnamed: 8_level_0,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,Season
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,
+Tm,G,Passing Cmp,Passing Att,Passing Yds,Passing TD,Passing Int,2PP,Sk,Rushing Att,Rushing Yds,Rushing TD,Fantasy FantPt,Fantasy DKPt,Fantasy FDPt,Fantasy per Game FantPt,Fantasy per Game DKPt,Fantasy per Game FDPt,Season
 Detroit Lions,17,353,560,4446,26,12,2,38,100,700,7,371.84,408.8,383.8,21.9,24.0,22.6,2022
 Miami Dolphins,17,415,623,4259,27,8,2,40,88,525,3,333.06,366.1,341.6,19.6,21.5,20.1,2022
 Kansas City Chiefs,17,407,617,4138,33,11,1,55,94,444,4,331.72,362.7,343.2,19.5,21.3,20.2,2022
@@ -10,8 +9,6 @@ Minnesota Vikings,17,408,616,4756,23,15,2,38,62,342,4,308.44,350.4,323.4,18.1,20
 Indianapolis Colts,17,365,535,3836,25,10,4,44,80,351,6,304.54,321.5,314.5,17.9,18.9,18.5,2022
 Jacksonville Jaguars,17,385,601,4258,25,14,3,35,92,469,2,297.32,331.2,311.2,17.5,19.5,18.3,2022
 Arizona Cardinals,17,412,591,4133,29,11,1,36,75,271,3,296.42,318.4,307.4,17.4,18.7,18.1,2022
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2022
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2022
 Carolina Panthers,17,383,580,4098,25,10,1,35,78,241,5,296.12,317.0,306.0,17.4,18.6,18.0,2022
 Atlanta Falcons,17,370,559,4010,25,10,2,21,64,221,3,286.50,308.5,296.5,16.9,18.1,17.4,2022
 New England Patriots,17,363,595,4018,28,19,1,54,72,348,2,277.52,308.5,296.5,16.3,18.1,17.4,2022
@@ -22,8 +19,6 @@ New York Giants,17,349,567,3909,21,6,,41,64,351,2,265.56,282.5,271.5,15.6,16.6,1
 Seattle Seahawks,17,341,544,3863,22,13,1,45,79,324,3,260.12,288.1,273.6,15.3,16.9,16.1,2022
 Baltimore Ravens,17,393,592,4239,20,14,1,47,60,233,3,256.86,289.9,270.9,15.1,17.1,15.9,2022
 Los Angeles Chargers,17,310,505,3693,24,14,1,39,57,236,3,255.42,274.3,269.3,15.0,16.1,15.8,2022
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2022
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2022
 New Orleans Saints,17,321,535,3400,17,7,1,48,77,409,4,252.90,264.9,259.9,14.9,15.6,15.3,2022
 Dallas Cowboys,17,344,548,3755,23,16,1,54,65,327,3,242.90,277.9,258.9,14.3,16.3,15.2,2022
 Los Angeles Rams,17,373,552,4044,22,16,1,37,51,203,1,242.06,269.1,258.1,14.2,15.8,15.2,2022
@@ -46,8 +41,6 @@ Los Angeles Chargers,17,387,596,4568,25,9,,48,70,230,6,313.72,342.7,322.7,18.5,2
 Atlanta Falcons,17,340,549,3707,24,8,1,41,91,436,6,308.18,330.2,319.2,18.1,19.4,18.8,2023
 Tampa Bay Buccaneers,17,404,611,4568,23,13,1,48,63,234,6,305.82,348.8,320.3,18.0,20.5,18.8,2023
 Miami Dolphins,17,379,567,4125,27,15,2,56,80,304,5,293.70,330.4,308.4,17.3,19.4,18.1,2023
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2023
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2023
 Houston Texans,17,381,564,4312,17,14,4,46,65,283,7,291.68,333.7,309.2,17.2,19.6,18.2,2023
 Cincinnati Bengals,17,363,553,4478,22,17,2,44,88,375,4,290.62,324.6,307.6,17.1,19.1,18.1,2023
 Denver Broncos,17,381,569,4288,29,11,1,42,65,245,2,290.02,317.0,301.0,17.1,18.6,17.7,2023
@@ -58,8 +51,6 @@ Minnesota Vikings,17,425,605,4239,22,11,,42,74,268,4,280.06,306.1,292.1,16.5,18.
 Tennessee Titans,17,387,570,4181,20,6,1,45,62,217,2,261.04,280.9,266.9,15.4,16.5,15.7,2023
 New York Giants,17,371,582,4157,21,18,,34,50,252,4,257.78,296.7,276.7,15.2,17.5,16.3,2023
 Green Bay Packers,17,342,523,3803,21,7,1,44,83,419,1,256.92,281.9,264.4,15.1,16.6,15.6,2023
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2023
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2023
 Las Vegas Raiders,17,375,562,3889,21,13,,45,70,283,2,248.46,266.9,260.9,14.6,15.7,15.3,2023
 New England Patriots,17,369,573,3787,18,10,4,36,90,198,4,247.98,271.4,257.9,14.6,16.0,15.2,2023
 Pittsburgh Steelers,17,347,572,4158,22,16,3,47,60,274,0,247.92,277.7,263.7,14.6,16.3,15.5,2023
@@ -82,8 +73,6 @@ Baltimore Ravens,17,395,624,4466,26,12,1,54,62,233,3,302.34,334.3,315.3,17.8,19.
 Las Vegas Raiders,17,370,561,3989,29,10,1,37,65,283,3,301.96,321.9,311.9,17.8,18.9,18.3,2024
 Los Angeles Rams,17,354,542,4101,29,13,1,38,73,359,3,300.74,325.9,310.9,17.7,19.2,18.3,2024
 Cleveland Browns,17,315,508,3860,26,3,,41,97,437,1,298.38,303.1,301.1,17.6,17.8,17.7,2024
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2024
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2024
 Detroit Lions,17,373,609,4404,18,16,1,37,73,454,6,297.56,329.6,313.6,17.5,19.4,18.4,2024
 Indianapolis Colts,17,377,544,4120,27,16,2,36,76,322,4,293.10,325.0,309.0,17.2,19.1,18.2,2024
 New York Giants,17,349,503,3869,23,5,1,45,76,403,4,291.26,305.1,296.1,17.1,17.9,17.4,2024
@@ -94,8 +83,6 @@ Arizona Cardinals,17,370,539,3930,20,9,1,41,69,303,6,279.50,298.5,288.5,16.4,17.
 New England Patriots,17,346,533,3749,27,7,1,28,67,231,1,277.06,290.1,284.1,16.3,17.1,16.7,2024
 New York Jets,17,327,520,3588,18,7,2,42,78,325,8,276.22,291.0,283.0,16.2,17.1,16.6,2024
 Seattle Seahawks,17,370,568,3923,25,13,,45,62,251,2,275.02,292.7,288.2,16.2,17.2,17.0,2024
-,,Passing,Passing,Passing,Passing,Passing,,,Rushing,Rushing,Rushing,Fantasy,Fantasy,Fantasy,Fantasy per Game,Fantasy per Game,Fantasy per Game,2024
-Tm,G,Cmp,Att,Yds,TD,Int,2PP,Sk,Att,Yds,TD,FantPt,DKPt,FDPt,FantPt,DKPt,FDPt,2024
 San Francisco 49ers,17,338,515,3476,25,11,1,36,55,276,4,273.34,292.3,284.3,16.1,17.2,16.7,2024
 New Orleans Saints,17,366,591,4295,19,14,2,39,80,434,1,271.40,301.2,285.2,16.0,17.7,16.8,2024
 Los Angeles Chargers,17,366,564,3759,24,15,,46,72,392,3,269.64,289.6,284.6,15.9,17.0,16.7,2024
