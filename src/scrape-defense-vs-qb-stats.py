@@ -1,4 +1,4 @@
-''' This script scrapes defense vs QB stats tables from Pro-Football-Reference.com for the 2022-2024 seasons. '''
+''' This script scrapes defense vs QB stats tables from Pro-Football-Reference.com for the 2017-2024 seasons. '''
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,6 +9,11 @@ import time
 from io import StringIO
 
 urls = {
+    2017: "https://www.pro-footba ll-reference.com/years/2017/fantasy-points-against-QB.htm",
+    2018: "https://www.pro-football-reference.com/years/2018/fantasy-points-against-QB.htm",
+    2019: "https://www.pro-football-reference.com/years/2019/fantasy-points-against-QB.htm",
+    2020: "https://www.pro-football-reference.com/years/2020/fantasy-points-against-QB.htm",
+    2021: "https://www.pro-football-reference.com/years/2021/fantasy-points-against-QB.htm",
     2022: "https://www.pro-football-reference.com/years/2022/fantasy-points-against-QB.htm",
     2023: "https://www.pro-football-reference.com/years/2023/fantasy-points-against-QB.htm",
     2024: "https://www.pro-football-reference.com/years/2024/fantasy-points-against-QB.htm"
