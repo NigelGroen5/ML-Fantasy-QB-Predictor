@@ -156,6 +156,24 @@ df_clean['Fantasy_Points'] = (
     (df_clean['Fumbles'] * 2)
 )
 
+# Clean team abbreviations to current formats
+team_map = {
+    "SFO": "SF",
+    "NWE": "NE",
+    "LVR": "LV",
+    "OAK": "LV",
+    "TAM": "TB",
+    "NOR": "NO",
+    "GNB": "GB",
+    "KAN": "KC",
+}
+df_clean['Opponent'] = df_clean['Opponent'].replace(team_map)
+df_clean['Team'] = df_clean['Team'].replace(team_map)
+
+# Add Season column
+df_clean['Date'] = pd.to_datetime(df_clean['Date'], errors='coerce')
+df_clean['Season'] = df_clean['Date'].dt.year
+
 # Save cleaned data to CSV
 df_clean.to_csv('mahomes_complete_game_logs.csv', index=False)
 print("saved to csv")

@@ -9,7 +9,8 @@ import time
 from io import StringIO
 
 urls = {
-    2017: "https://www.pro-footba ll-reference.com/years/2017/fantasy-points-against-QB.htm",
+    2016: "https://www.pro-football-reference.com/years/2016/fantasy-points-against-QB.htm",
+    2017: "https://www.pro-football-reference.com/years/2017/fantasy-points-against-QB.htm",
     2018: "https://www.pro-football-reference.com/years/2018/fantasy-points-against-QB.htm",
     2019: "https://www.pro-football-reference.com/years/2019/fantasy-points-against-QB.htm",
     2020: "https://www.pro-football-reference.com/years/2020/fantasy-points-against-QB.htm",
@@ -89,8 +90,52 @@ if dfs:
         all_def_vs_qb = all_def_vs_qb[all_def_vs_qb["Tm"] != "Tm"].reset_index(drop=True)
     print(all_def_vs_qb.head(10))
 
+
+    # convert team names to abbrevs
+    team_map = {
+        "Arizona Cardinals": "ARI",
+        "Atlanta Falcons": "ATL",
+        "Baltimore Ravens": "BAL",
+        "Buffalo Bills": "BUF",
+        "Carolina Panthers": "CAR",
+        "Chicago Bears": "CHI",
+        "Cincinnati Bengals": "CIN",
+        "Cleveland Browns": "CLE",
+        "Dallas Cowboys": "DAL",
+        "Denver Broncos": "DEN",
+        "Detroit Lions": "DET",
+        "Green Bay Packers": "GB",
+        "Houston Texans": "HOU",
+        "Indianapolis Colts": "IND",
+        "Jacksonville Jaguars": "JAX",  
+        "Kansas City Chiefs": "KC",
+        "Las Vegas Raiders": "LV",
+        "Oakland Raiders": "LV",            
+        "Los Angeles Chargers": "LAC",
+        "San Diego Chargers": "LAC",        
+        "Los Angeles Rams": "LAR",
+        "St. Louis Rams": "LAR",            
+        "Miami Dolphins": "MIA",
+        "Minnesota Vikings": "MIN",
+        "New England Patriots": "NE",
+        "New Orleans Saints": "NO",
+        "New York Giants": "NYG",
+        "New York Jets": "NYJ",
+        "Philadelphia Eagles": "PHI",
+        "Pittsburgh Steelers": "PIT",
+        "San Francisco 49ers": "SF",
+        "Seattle Seahawks": "SEA",
+        "Tampa Bay Buccaneers": "TB",
+        "Tennessee Titans": "TEN",
+        "Washington Redskins": "WAS",
+        "Washington Football Team": "WAS",
+        "Washington Commanders": "WAS"
+    }
+    all_def_vs_qb["Tm"] = all_def_vs_qb["Tm"].map(team_map)
+
     # save csv
     all_def_vs_qb.to_csv("def_vs_qb_stats.csv", index=False)
     print("saved to csv")
+    
 else:
     print("No tables extracted.")
