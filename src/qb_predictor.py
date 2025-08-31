@@ -15,7 +15,37 @@ class QBFantasyPredictor:
         self.top_features = []
         self.feature_importance = None
         self.is_trained = False
+        self.qb_avgs = None
         
+    def calculate_qb_averages(self, historical_data: pd.DataFrame) -> dict:
+        """Calculate QB-specific averages from historical data"""
+        if len(historical_data) == 0:
+            # Default averages if no historical data
+            return {
+                'Completions': 22.0,
+                'Attempts': 34.0, 
+                'Pass_Yds': 250,
+                'Pass_TD': 1.7,
+                'INT': 0.8,
+                'Rush_Att': 3.5,
+                'Rush_Yds': 18,
+                'Rush_TD': 0.15,
+                'Fantasy_Points': 17.5
+            }
+        
+        # Calculate averages from historical data
+        return {
+            'Completions': historical_data['Completions'].mean(),
+            'Attempts': historical_data['Attempts'].mean(), 
+            'Pass_Yds': historical_data['Pass_Yds'].mean(),
+            'Pass_TD': historical_data['Pass_TD'].mean(),
+            'INT': historical_data['INT'].mean(),
+            'Rush_Att': historical_data['Rush_Att'].mean(),
+            'Rush_Yds': historical_data['Rush_Yds'].mean(),
+            'Rush_TD': historical_data['Rush_TD'].mean(),
+            'Fantasy_Points': historical_data['Fantasy_Points'].mean()
+        }
+    
     def create_advanced_features(self, data: pd.DataFrame) -> pd.DataFrame:
         """Create predictive features"""
         data = data.sort_values("date").copy()
@@ -113,12 +143,20 @@ class QBFantasyPredictor:
         """Preprocess QB data for training/prediction"""
         data = data.copy()
         
-        # Handle date column
+        # Handle date column - fix for dates with time components
         if "Date" in data.columns:
-            data["date"] = pd.to_datetime(data["Date"])
+            # Handle dates that might have time components
+            try:
+                data["date"] = pd.to_datetime(data["Date"], errors='coerce')
+                # If parsing fails, try extracting just the date part
+                if data["date"].isna().any():
+                    # Try extracting just the date part before any space
+                    data["date"] = pd.to_datetime(data["Date"].str.split().str[0], errors='coerce')
+            except:
+                data["date"] = pd.to_datetime(data["Season"].astype(str) + "-" + data["Week"].astype(str) + "-01")
         elif "date" not in data.columns:
             data["date"] = pd.to_datetime(data["Season"].astype(str) + "-" + data["Week"].astype(str) + "-01")
-        
+                
         #Create opponent code if Opponent column exists 
         if "Opponent" in data.columns and "opp_code" not in data.columns:
             data["opp_code"] = data["Opponent"].astype("category").cat.codes
@@ -227,20 +265,8 @@ class QBFantasyPredictor:
         
         data_copy = data.copy()
         
-        # Fill missing Mahomes stats with 2024 averages
-        mahomes_2024_avg = {
-            'Completions': 26.5,
-            'Attempts': 38.2, 
-            'Pass_Yds': 295,
-            'Pass_TD': 2.1,
-            'INT': 0.65,
-            'Rush_Att': 4.2,
-            'Rush_Yds': 15,
-            'Rush_TD': 0.2,
-            'Fantasy_Points': 19.5
-        }
-
-        for col, default_val in mahomes_2024_avg.items():
+        # Fill missing stats with QB-specific averages
+        for col, default_val in self.qb_avgs.items():
             if col in data_copy.columns:
                 data_copy[col] = data_copy[col].fillna(default_val)
         
@@ -315,6 +341,9 @@ class QBFantasyPredictor:
         if len(processed_data) < 20:
             raise ValueError("Insufficient training data. Need at least 20 games.")
         
+        # Calculate QB-specific averages from historical data
+        self.qb_avgs = self.calculate_qb_averages(qb_data)
+        
         self.select_features(processed_data, all_features)
         self.train_model(processed_data)
 
@@ -335,7 +364,7 @@ def predict_qb_fantasy_points(qb_data: pd.DataFrame, qb_name: str, season_year: 
         print("No predictions were generated")
         return pd.DataFrame()
     
-    # Summry stats
+    # Summary stats
     avg_prediction = predictions["Predicted_Fantasy_Points"].mean()
     min_prediction = predictions["Predicted_Fantasy_Points"].min()
     max_prediction = predictions["Predicted_Fantasy_Points"].max()
@@ -349,16 +378,23 @@ def predict_qb_fantasy_points(qb_data: pd.DataFrame, qb_name: str, season_year: 
 
 if __name__ == "__main__":
     try:
+        #PICK QB NAME HERE
+        qb_name = "Mahomes"  
+        data_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
+        
         # Load complete dataset
-        complete_data = pd.read_csv("data/mahomes_complete_2017_2025.csv")
+        complete_data = pd.read_csv(data_filename)
         
         # Make predictions for 2025
-        predictions = predict_qb_fantasy_points(complete_data, "Patrick Mahomes", 2025)
-        predictions.to_csv('mahomes_2025_predictions.csv', index=False)
-        print("\nPredictions saved to 'mahomes_2025_predictions.csv'")
+        predictions = predict_qb_fantasy_points(complete_data, qb_name, 2025)
+        
+        # Save predictions
+        output_filename = f"data/predictions/{qb_name.lower().replace(' ', '_')}_2025_predictions.csv"
+        predictions.to_csv(output_filename, index=False)
+        print(f"\nPredictions saved to '{output_filename}'")
         
         # Show detailed predictions
-        print("\nDetailed 2025 Predictions:")
+        print(f"\n{qb_name} 2025 Predictions:")
         print(predictions.to_string(index=False))
         
     except Exception as e:
