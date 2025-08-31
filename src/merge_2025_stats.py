@@ -1,22 +1,32 @@
-'''This file creates the 2025 prediction dataset by merging KC Chiefs 2025 schedule with 2024 defensive stats and historical Mahomes data.'''
+'''
+This file creates the 2025 prediction dataset by merging team's 2025 schedule 
+with 2024 defensive stats and historical QB data.
+'''
 
 import pandas as pd
 import numpy as np
 
-def create_2025_prediction_data():
-    # Load the data
+# SET THE QB NAME AND TEAM ABBREVIATION HERE
+qb_name = "Mahomes"  
+team_abbrev = "KC"        
+
+def create_2025_prediction_data(qb_name, team_abbrev):
+    # load the data
     schedule_2025 = pd.read_csv("data/nfl_schedule_2025.csv")
     defense_stats = pd.read_csv("data/def_vs_qb_stats.csv")
-    historical_data = pd.read_csv("data/mahomes_with_defense_pg.csv")
     
-    # Find KC's row in the schedule
-    kc_schedule = schedule_2025[schedule_2025['Tm'] == 'KC'].copy()
-    if len(kc_schedule) == 0:
-        raise ValueError("KC Chiefs not found in 2025 schedule")
+    # load historical QB data
+    historical_filename = f"data/{qb_name.lower().replace(' ', '_')}_with_defense_pg.csv"
+    historical_data = pd.read_csv(historical_filename)
+    
+    # find teams row in the schedule
+    team_schedule = schedule_2025[schedule_2025['Tm'] == team_abbrev].copy()
+    if len(team_schedule) == 0:
+        raise ValueError(f"{team_abbrev} not found in 2025 schedule")
     
     # Reshape
     schedule_long = pd.melt(
-        kc_schedule,
+        team_schedule,
         id_vars=['Tm', 'Season'],
         value_vars=[f'Week{i}' for i in range(1, 19)],
         var_name='Week',
@@ -25,9 +35,9 @@ def create_2025_prediction_data():
     
     #Convert Week to numeric and filter out BYE weeks
     schedule_long['Week'] = schedule_long['Week'].str.replace('Week', '').astype(int)
-    kc_2025 = schedule_long[schedule_long['Opponent'] != 'BYE'].copy()
-    kc_2025 = kc_2025[['Week', 'Opponent']]
-    kc_2025['Season'] = 2025
+    team_2025 = schedule_long[schedule_long['Opponent'] != 'BYE'].copy()
+    team_2025 = team_2025[['Week', 'Opponent']]
+    team_2025['Season'] = 2025
     
     # Filter for 2024 defensive stats
     defense_2024 = defense_stats[defense_stats['Season'] == 2024].copy()
@@ -45,7 +55,11 @@ def create_2025_prediction_data():
         "Passing Yds": "Def_PassYds_Allowed_pg",
         "Passing TD": "Def_PassTD_Allowed_pg",
         "Passing Int": "Def_INT_Forced_pg",
+        "Rushing Att": "Def_RushAtt_Allowed_pg",  
+        "Rushing Yds": "Def_RushYds_Allowed_pg",  
+        "Rushing TD": "Def_RushTD_Allowed_pg",    
         "Sk": "Def_Sacks_pg",
+        "2PP": "Def_2PP_Allowed_pg",              
         "Fantasy per Game FantPt": "Def_FantasyPts_Allowed_pg"
     }
     
@@ -62,21 +76,39 @@ def create_2025_prediction_data():
     defense_2024_clean = defense_2024[defense_cols].copy()
     defense_2024_clean = defense_2024_clean.rename(columns={'Tm': 'Opponent'})
     
+    # Clean opponent names to ensure they match
+    team_2025['Opponent'] = team_2025['Opponent'].str.replace('@', '')
+    defense_2024_clean['Opponent'] = defense_2024_clean['Opponent'].str.replace('@', '')
+    
     # Merge 2025 schedule with 2024 defensive stats
     prediction_data = pd.merge(
-        kc_2025,
+        team_2025,
         defense_2024_clean,
         on='Opponent',
         how='left'
     )
     
-    # Add empty columns for Mahomes' stats
-    mahomes_stats = [
+    # Check for missing defensive data
+    missing_defense = prediction_data[prediction_data['Def_PassYds_Allowed_pg'].isna()]
+    if len(missing_defense) > 0:
+        print(f"Warning: Missing defensive data for {len(missing_defense)} opponents:")
+        for _, row in missing_defense.iterrows():
+            print(f"  Week {row['Week']}: {row['Opponent']}")
+        
+        # Fill missing values with league averages
+        for col in defense_cols:
+            if col != 'Tm' and col in defense_2024_clean.columns:
+                league_avg = defense_2024_clean[col].mean()
+                prediction_data[col] = prediction_data[col].fillna(league_avg)
+                print(f"Filled missing {col} values with league average: {league_avg:.2f}")
+    
+    # Add empty columns for QB's stats
+    qb_stats = [
         'Date', 'Completions', 'Attempts', 'Pass_Yds', 'Pass_TD', 'INT',
         'Rush_Att', 'Rush_Yds', 'Rush_TD', 'Fantasy_Points'
     ]
     
-    for col in mahomes_stats:
+    for col in qb_stats:
         prediction_data[col] = np.nan
     
     # Create realistic dates 
@@ -94,6 +126,9 @@ def create_2025_prediction_data():
     prediction_data['Date'] = prediction_data['Week'].apply(create_nfl_date)
     prediction_data['Date'] = pd.to_datetime(prediction_data['Date'])
     
+    # Add QB name
+    prediction_data['QB'] = qb_name
+    
     # Ensure both datasets have the same columns
     historical_cols = historical_data.columns.tolist()
     prediction_cols = prediction_data.columns.tolist()
@@ -101,16 +136,25 @@ def create_2025_prediction_data():
     for col in historical_cols:
         if col not in prediction_cols:
             prediction_data[col] = np.nan
+    
     # Reorder prediction data columns to match historical data
     prediction_data = prediction_data[historical_cols]
     # Combine historical and prediction data
     combined_data = pd.concat([historical_data, prediction_data], ignore_index=True)
     
     # Save 
-    combined_data.to_csv("data/mahomes_complete_2017_2025.csv", index=False)
-    print("Done and saved")
+    output_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_2017_2025.csv"
+    combined_data.to_csv(output_filename, index=False)
+    print(f"Done and saved to {output_filename}")
+    
+    # Show the 2025 prediction data with defensive stats
+    print(f"\n2025 Schedule for {qb_name} ({team_abbrev}):")
+    display_cols = ['Week', 'Opponent', 'Def_PassYds_Allowed_pg', 'Def_RushYds_Allowed_pg', 
+                   'Def_Sacks_pg', 'Def_FantasyPts_Allowed_pg']
+    display_data = combined_data[combined_data['Season'] == 2025][display_cols]
+    print(display_data.to_string(index=False))
+    
     return combined_data
 
 if __name__ == "__main__":
-    combined_data = create_2025_prediction_data()
-    print(combined_data[combined_data['Season'] == 2025][['Week', 'Opponent', 'Def_PassYds_Allowed_pg', 'Def_FantasyPts_Allowed_pg']].head(10))
+    combined_data = create_2025_prediction_data(qb_name, team_abbrev)

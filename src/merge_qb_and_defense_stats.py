@@ -1,13 +1,15 @@
+'''Merge QB data with defense vs QB stats'''
+
 import pandas as pd
 
 # SET THE QB NAME HERE
 qb_name = "Lamar Jackson"  
 
-# Load QB data
+# load QB data
 qb_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_game_logs.csv"
 qb_data = pd.read_csv(qb_filename)
 
-# Load defense data
+#load defense data
 defense = pd.read_csv("data/def_vs_qb_stats.csv")
 
 # keep only relevant QB columns
