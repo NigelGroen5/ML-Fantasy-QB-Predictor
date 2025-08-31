@@ -1,10 +1,17 @@
 import pandas as pd
 
-mahomes = pd.read_csv("data/mahomes_complete_game_logs.csv")
+# SET THE QB NAME HERE
+qb_name = "Lamar Jackson"  
+
+# Load QB data
+qb_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_game_logs.csv"
+qb_data = pd.read_csv(qb_filename)
+
+# Load defense data
 defense = pd.read_csv("data/def_vs_qb_stats.csv")
 
-# keep only relevant Mahomes columns
-mahomes_relevant = mahomes[[
+# keep only relevant QB columns
+qb_relevant = qb_data[[
     "Season", "Week", "Date", "Opponent",
     "Completions", "Attempts", "Pass_Yds", "Pass_TD", "INT",
     "Rush_Att", "Rush_Yds", "Rush_TD",
@@ -51,7 +58,7 @@ for src, dst in per_game_src_to_dst.items():
     if src in totals_to_divide and src in defense.columns:
         defense[dst] = defense[src] / defense["G"]
 
-# Use the site’s per-game fantasy directly
+# Use the site's per-game fantasy directly
 if "Fantasy per Game FantPt" in defense.columns:
     defense["Def_FantasyPts_Allowed_pg"] = defense["Fantasy per Game FantPt"]
 
@@ -60,18 +67,24 @@ keep_cols = ["Tm", "Season"] + [v for v in per_game_src_to_dst.values()] + ["Def
 defense_relevant = defense[keep_cols].copy()
 defense_relevant = defense_relevant.rename(columns={"Tm": "Opponent"})
 
-# Shift season so each Mahomes season uses previous year's defense 
+# Shift season so each QB season uses previous year's defense 
 defense_relevant["Season"] = defense_relevant["Season"] + 1
 
 # Merge 
 merged = pd.merge(
-    mahomes_relevant,
+    qb_relevant,
     defense_relevant,
     on=["Season", "Opponent"],
     how="left"
 )
 
-merged.to_csv("data/mahomes_with_defense_pg.csv", index=False)
-print("Saved -> data/mahomes_with_defense_pg.csv")
+# Add QB name column
+merged["QB"] = qb_name
+
+# Save output
+output_filename = f"data/{qb_name.lower().replace(' ', '_')}_with_defense_pg.csv"
+merged.to_csv(output_filename, index=False)
+
+print(f"Saved -> {output_filename}")
 print("Shape:", merged.shape)
 print(merged.head())
