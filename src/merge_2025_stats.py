@@ -7,8 +7,8 @@ import pandas as pd
 import numpy as np
 
 # SET THE QB NAME AND TEAM ABBREVIATION HERE
-qb_name = "Mahomes"  
-team_abbrev = "KC"        
+qb_name = "Lamar Jackson"  
+team_abbrev = "BAL"        
 
 def create_2025_prediction_data(qb_name, team_abbrev):
     # load the data
@@ -143,7 +143,7 @@ def create_2025_prediction_data(qb_name, team_abbrev):
     combined_data = pd.concat([historical_data, prediction_data], ignore_index=True)
     
     # Save 
-    output_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_2017_2025.csv"
+    output_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
     combined_data.to_csv(output_filename, index=False)
     print(f"Done and saved to {output_filename}")
     
