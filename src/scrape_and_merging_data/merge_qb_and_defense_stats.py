@@ -3,7 +3,7 @@
 import pandas as pd
 
 # SET THE QB NAME HERE
-qb_name = "Lamar Jackson"  
+qb_name = "Josh Allen"  
 
 # load QB data
 qb_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_game_logs.csv"

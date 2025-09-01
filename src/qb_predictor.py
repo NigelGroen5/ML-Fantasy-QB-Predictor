@@ -379,7 +379,7 @@ def predict_qb_fantasy_points(qb_data: pd.DataFrame, qb_name: str, season_year: 
 if __name__ == "__main__":
     try:
         #PICK QB NAME HERE
-        qb_name = "Mahomes"  
+        qb_name = "Josh Allen"  
         data_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
         
         # Load complete dataset

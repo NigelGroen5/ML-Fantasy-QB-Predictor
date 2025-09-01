@@ -7,8 +7,8 @@ import pandas as pd
 import numpy as np
 
 # SET THE QB NAME AND TEAM ABBREVIATION HERE
-qb_name = "Lamar Jackson"  
-team_abbrev = "BAL"        
+qb_name = "Josh Allen"  
+team_abbrev = "BUF"        
 
 def create_2025_prediction_data(qb_name, team_abbrev):
     # load the data
