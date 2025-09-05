@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy QB Rankings 2025</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1000, 9999) | random }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="main-title">
+                    Fantasy QB Rankings 2025
+                </h1>
+                <p class="subtitle">This tool ranks how well each quarterback is projected to perform in Fantasy during the 2025 season, based on a machine learning model I created. It also lets you compare quarterbacks using the model's predictions to help you decide who to draft and start in your fantasy league.</p>
+            </div>
+        </header>
+
+        <div class="selection-controls">
+            <div class="selection-info">
+                <span class="selected-count" id="selectedCount">0</span>
+                <span class="selected-text">QBs selected</span>
+                <span class="min-text">(Minimum 2, Maximum 4)</span>
+            </div>
+            <button class="compare-btn" id="compareBtn" disabled>
+                Compare Selected QBs
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="rankings-table">
+                <thead>
+                    <tr class="table-header">
+                        <th class="checkbox-col">
+                            <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                        </th>
+                        <th class="rank-col">Rank</th>
+                        <th class="name-col">Quarterback</th>
+                        <th class="points-col">Total Projected Points</th>
+                        <th class="avg-col">Avg Per Week</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ranking in rankings %}
+                    <tr class="qb-row" data-qb="{{ ranking[0] }}">
+                        <td class="checkbox-col">
+                            <input type="checkbox" class="qb-checkbox" value="{{ ranking[0] }}">
+                        </td>
+                        <td class="rank-col">{{ loop.index }}</td>
+                        <td class="name-col">{{ ranking[0] }}</td>
+                        <td class="points-col">{{ "%.1f"|format(ranking[1]) }}</td>
+                        <td class="avg-col">{{ "%.1f"|format(ranking[1] / 17) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const qbCheckboxes = document.querySelectorAll('.qb-checkbox');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const compareBtn = document.getElementById('compareBtn');
+
+        // Handle select all checkbox
+        selectAllCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                qbCheckboxes.forEach((checkbox, index) => {
+                    checkbox.checked = index < 4;
+                });
+            } else {
+                qbCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            }
+            updateSelection();
+        });
+
+        // handle individual QB checkboxes
+        qbCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checkedBoxes = document.querySelectorAll('.qb-checkbox:checked');
+                const count = checkedBoxes.length;
+                
+                //dont select more than 4 QBs
+                if (count > 4) {
+                    this.checked = false;
+                    return;
+                }
+                updateSelection();
+            });
+        });
+
+        // Update selection count and button state
+        function updateSelection() {
+            const checkedBoxes = document.querySelectorAll('.qb-checkbox:checked');
+            const count = checkedBoxes.length;
+            
+            selectedCountSpan.textContent = count;
+            
+            // Update compare button
+            if (count >= 2 && count <= 4) {
+                compareBtn.disabled = false;
+                compareBtn.classList.add('enabled');
+            } else {
+                compareBtn.disabled = true;
+                compareBtn.classList.remove('enabled');
+            }
+
+            // Update select all checkbox
+            if (count === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            } else if (count === qbCheckboxes.length) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        // Handle compare button click
+        compareBtn.addEventListener('click', function() {
+            const selectedQBs = Array.from(document.querySelectorAll('.qb-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+            if (selectedQBs.length >= 2) {
+                const params = new URLSearchParams();
+                selectedQBs.forEach(qb => params.append('qbs', qb));
+                window.location.href = `/compare?${params.toString()}`;
+            }
+        });
+
+        //  hover effects for table rows
+        document.querySelectorAll('.qb-row').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Nigel Groen - Fantasy QB Predictor</p>
+            <p>Built with Machine Learning • <a href="https://github.com/NigelGroen5" target="_blank">GitHub</a></p>
+        </div>
+    </footer>
+</body>
+</html>

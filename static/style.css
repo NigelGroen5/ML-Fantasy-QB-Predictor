@@ -1,0 +1,479 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+.header {
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+}
+
+.main-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.subtitle {
+    font-size: 1.3rem;
+    color: #6c757d;
+    font-weight: 400;
+}
+
+/* Selection Controls */
+.selection-controls {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.selection-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.selected-text {
+    font-size: 1.2rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.min-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Buttons */
+.compare-btn, .back-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.compare-btn:hover:not(:disabled), .back-btn:hover {
+    background: #0056b3;
+}
+
+.compare-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.compare-btn.enabled {
+    background: #28a745;
+}
+
+.compare-btn.enabled:hover {
+    background: #218838;
+}
+
+/* Back button specific styling - better appearance */
+.back-btn {
+    background: #6c757d;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+/* Footer */
+.footer {
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 20px 0;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content p {
+    margin: 5px 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.footer-content a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-content a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Table Styles */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.rankings-table, .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.table-header {
+    background: #f8f9fa;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-header th {
+    padding: 20px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.qb-row, .week-row {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.qb-row:hover, .week-row:hover {
+    background: #f8f9fa;
+}
+
+.qb-row td, .week-row td {
+    padding: 18px 15px;
+    font-size: 1rem;
+}
+
+.rank-col {
+    font-weight: 700;
+    color: #007bff;
+    font-size: 1.2rem;
+}
+
+.name-col {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.points-col {
+    font-weight: 700;
+    color: #28a745;
+    font-size: 1.2rem;
+}
+
+.avg-col {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Checkbox Styles */
+.checkbox-col {
+    text-align: center;
+    width: 60px;
+}
+
+.qb-checkbox, .select-all-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.qb-checkbox:checked, .select-all-checkbox:checked {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+.qb-checkbox:hover, .select-all-checkbox:hover {
+    border-color: #007bff;
+}
+
+/* Comparison Table Specific */
+.week-col {
+    font-weight: 700;
+    color: #007bff;
+    background: #f8f9fa;
+    text-align: center;
+    width: 100px;
+}
+
+.qb-col {
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    min-width: 150px;
+}
+
+.qb-data {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.opponent {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.points {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #495057;
+}
+
+.bye-week {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.bye-points {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+/* Score Highlighting */
+.best-score {
+    background: #d4edda;
+    border: 2px solid #28a745;
+}
+
+.worst-score {
+    background: #f8d7da;
+    border: 2px solid #dc3545;
+}
+
+/* Summary Section */
+.summary-section {
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.summary-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.qb-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #495057;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+/* Comparison Summary */
+.comparison-summary {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-summary h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #495057;
+    text-align: center;
+}
+
+/* Animations */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .main-title {
+        font-size: 2.5rem;
+    }
+    
+    
+    .selection-controls {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .table-container {
+        padding: 20px;
+    }
+    
+    .table-header th {
+        padding: 15px 10px;
+        font-size: 1rem;
+    }
+    
+    .qb-row td, .week-row td {
+        padding: 15px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .table-container {
+        padding: 15px;
+    }
+    
+    .table-header th {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+    
+    .qb-row td, .week-row td {
+        padding: 12px 8px;
+        font-size: 0.8rem;
+    }
+}

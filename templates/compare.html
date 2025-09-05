@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QB Comparison - Fantasy QB Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(1000, 9999) | random }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="main-title">
+                    QB Comparison
+                </h1>
+                <p class="subtitle">Weekly Projected Fantasy Points Breakdown</p>
+                <a href="/" class="back-btn">
+                    ← Back to Rankings
+                </a>
+            </div>
+        </header>
+
+        <div class="comparison-summary">
+            <h2>Comparing: {{ selected_qbs|join(', ') }}</h2>
+        </div>
+
+        <div class="table-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr class="table-header">
+                        <th class="week-col">Week</th>
+                        {% for qb in selected_qbs %}
+                        <th class="qb-col">{{ qb }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in comparison_data.weeks %}
+                    <tr class="week-row">
+                        <td class="week-col">Week {{ week }}</td>
+                        {% for qb in selected_qbs %}
+                        <td class="qb-data" data-week="{{ week }}" data-qb="{{ qb }}">
+                            {% if qb in comparison_data.qbs and week in comparison_data.qbs[qb] %}
+                                {% set week_data = comparison_data.qbs[qb][week] %}
+                                {% if week_data.is_bye %}
+                                    <div class="bye-week">BYE</div>
+                                    <div class="bye-points">0.0</div>
+                                {% else %}
+                                    <div class="opponent">{{ week_data.opponent }}</div>
+                                    <div class="points">{{ "%.1f"|format(week_data.predicted_points) }}</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="bye-week">BYE</div>
+                                <div class="bye-points">0.0</div>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Projected Season Summary -->
+        <div class="summary-section">
+            <h3 class="summary-title">Projected Season Summary</h3>
+            <div class="stats-grid">
+                {% for qb in selected_qbs %}
+                <div class="stat-card">
+                    <h4 class="qb-name">{{ qb }}</h4>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Points:</span>
+                        <span class="stat-value">{{ "%.1f"|format(comparison_data.totals[qb] if qb in comparison_data.totals else 0) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg Per Week:</span>
+                        <span class="stat-value">{{ "%.1f"|format((comparison_data.totals[qb] if qb in comparison_data.totals else 0) / 17) }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Games Played:</span>
+                        <span class="stat-value">17</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Highlight best and worst scores for each week
+        document.addEventListener('DOMContentLoaded', function() {
+            const weekRows = document.querySelectorAll('.week-row');
+            weekRows.forEach(row => {
+                const qbDataCells = row.querySelectorAll('.qb-data');
+                const scores = [];
+                // Collect all scores for this week
+                qbDataCells.forEach(cell => {
+                    const pointsElement = cell.querySelector('.points');
+                    const byeElement = cell.querySelector('.bye-week');
+                    
+                    if (pointsElement && !byeElement) {
+                        const points = parseFloat(pointsElement.textContent);
+                        scores.push({
+                            cell: cell,
+                            points: points
+                        });
+                    }
+                });
+                
+                // Find best score and highlight 
+                if (scores.length > 0) {
+                    const bestScore = Math.max(...scores.map(s => s.points));
+                    
+                    scores.forEach(({ cell, points }) => {
+                        if (points === bestScore) {
+                            cell.classList.add('best-score');
+                        } else {
+                            cell.classList.add('worst-score');
+                        }
+                    });
+                }
+            });
+        });
+
+        //  hover effects for stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+            });
+        });
+    </script>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Nigel Groen - Fantasy QB Predictor</p>
+            <p>Built with Machine Learning • <a href="https://github.com/NigelGroen5" target="_blank">GitHub</a></p>
+        </div>
+    </footer>
+</body>
+</html>

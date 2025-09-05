@@ -90,15 +90,11 @@ class QBDataManager:
     def get_qb_comparison_data(self, qb_names: List[str]) -> Dict:
         """Get weekly comparison data for selected QBs"""
         comparison_data = {
-            'weeks': [],
+            'weeks': list(range(1, 19)),  
             'qbs': {},
+            'totals': {},  
             'schedule': self.schedule_data.to_dict('records') if self.schedule_data is not None else []
         }
-        
-        # Get all weeks from the first QB's predictions
-        if qb_names and qb_names[0] in self.qb_predictions:
-            first_qb_data = self.qb_predictions[qb_names[0]]
-            comparison_data['weeks'] = [int(week) for week in first_qb_data['Week']]
         
         # Get data for each selected QB
         for qb_name in qb_names:
@@ -106,14 +102,55 @@ class QBDataManager:
                 qb_data = self.qb_predictions[qb_name]
                 qb_weekly_data = {}
                 
-                for _, row in qb_data.iterrows():
-                    week = int(row['Week'])
-                    qb_weekly_data[week] = {
-                        'opponent': row['Opponent'],
-                        'predicted_points': row['Predicted_Fantasy_Points']
-                    }
+                # Get QB's team for bye week checking
+                qb_team_map = {
+                    'Josh Allen': 'BUF',
+                    'Jalen Hurts': 'PHI', 
+                    'Lamar Jackson': 'BAL',
+                    'Mahomes': 'KC'
+                }
+                team = qb_team_map.get(qb_name, '')
+                
+                # Get bye weeks for this team
+                bye_weeks = []
+                if team and self.schedule_data is not None:
+                    team_schedule = self.schedule_data[self.schedule_data['Tm'] == team]
+                    if not team_schedule.empty:
+                        for week in range(1, 19):
+                            week_col = f'Week{week}'
+                            if week_col in team_schedule.columns:
+                                if team_schedule.iloc[0][week_col] == 'BYE':
+                                    bye_weeks.append(week)
+                
+                # Process each week 
+                for week in range(1, 19):
+                    if week in bye_weeks:
+                        qb_weekly_data[week] = {
+                            'opponent': 'BYE',
+                            'predicted_points': 0.0,
+                            'is_bye': True
+                        }
+                    else:
+                        # Find the prediction for this week
+                        week_data = qb_data[qb_data['Week'] == week]
+                        if not week_data.empty:
+                            row = week_data.iloc[0]
+                            qb_weekly_data[week] = {
+                                'opponent': row['Opponent'],
+                                'predicted_points': row['Predicted_Fantasy_Points'],
+                                'is_bye': False
+                            }
+                        else:
+                            # No prediction data for this week
+                            qb_weekly_data[week] = {
+                                'opponent': 'TBD',
+                                'predicted_points': 0.0,
+                                'is_bye': False
+                            }
                 
                 comparison_data['qbs'][qb_name] = qb_weekly_data
+                # Add the pre-calculated total points
+                comparison_data['totals'][qb_name] = self.qb_totals.get(qb_name, 0)
         
         return comparison_data
 
