@@ -27,7 +27,7 @@ class QBDataManager:
         prediction_files = glob.glob(os.path.join(self.predictions_dir, "*_2025_predictions.csv"))
         
         for file_path in prediction_files:
-            # Extract QB name from filename (e.g., "josh_allen_2025_predictions.csv" -> "josh_allen")
+            # Extract QB name from filename 
             filename = os.path.basename(file_path)
             qb_name = filename.replace("_2025_predictions.csv", "").replace("_", " ").title()
             
@@ -35,51 +35,13 @@ class QBDataManager:
             df = pd.read_csv(file_path)
             self.qb_predictions[qb_name] = df
             
-            # Calculate total projected points (excluding bye weeks)
+            # Calculate total projected points 
             total_points = self.calculate_total_points(qb_name, df)
             self.qb_totals[qb_name] = total_points
     
     def calculate_total_points(self, qb_name: str, predictions_df: pd.DataFrame) -> float:
-        """Calculate total projected fantasy points for a QB, handling bye weeks"""
-        if self.schedule_data is None:
-            # If no schedule data, just sum all predictions
-            return predictions_df['Predicted_Fantasy_Points'].sum()
-        
-        # Find the team for this QB (we'll need to map QB names to teams)
-        # For now, we'll use a simple mapping - you can expand this later
-        qb_team_map = {
-            'Josh Allen': 'BUF',
-            'Jalen Hurts': 'PHI', 
-            'Lamar Jackson': 'BAL',
-            'Mahomes': 'KC'
-        }
-        
-        team = qb_team_map.get(qb_name, '')
-        if not team:
-            # If we can't find the team, just sum all predictions
-            return predictions_df['Predicted_Fantasy_Points'].sum()
-        
-        # Get team schedule to find bye weeks
-        team_schedule = self.schedule_data[self.schedule_data['Tm'] == team]
-        if team_schedule.empty:
-            return predictions_df['Predicted_Fantasy_Points'].sum()
-        
-        # Get bye weeks
-        bye_weeks = []
-        for week in range(1, 19):  # NFL has 18 weeks
-            week_col = f'Week{week}'
-            if week_col in team_schedule.columns:
-                if team_schedule.iloc[0][week_col] == 'BYE':
-                    bye_weeks.append(week)
-        
-        # Sum predictions excluding bye weeks
-        total_points = 0
-        for _, row in predictions_df.iterrows():
-            week = int(row['Week'])
-            if week not in bye_weeks:
-                total_points += row['Predicted_Fantasy_Points']
-        
-        return total_points
+        """Calculate total projected fantasy points for a QB"""
+        return predictions_df['Predicted_Fantasy_Points'].sum()
     
     def get_qb_rankings(self) -> List[Tuple[str, float]]:
         """Get QB rankings sorted by total projected points"""
@@ -102,51 +64,23 @@ class QBDataManager:
                 qb_data = self.qb_predictions[qb_name]
                 qb_weekly_data = {}
                 
-                # Get QB's team for bye week checking
-                qb_team_map = {
-                    'Josh Allen': 'BUF',
-                    'Jalen Hurts': 'PHI', 
-                    'Lamar Jackson': 'BAL',
-                    'Mahomes': 'KC'
-                }
-                team = qb_team_map.get(qb_name, '')
-                
-                # Get bye weeks for this team
-                bye_weeks = []
-                if team and self.schedule_data is not None:
-                    team_schedule = self.schedule_data[self.schedule_data['Tm'] == team]
-                    if not team_schedule.empty:
-                        for week in range(1, 19):
-                            week_col = f'Week{week}'
-                            if week_col in team_schedule.columns:
-                                if team_schedule.iloc[0][week_col] == 'BYE':
-                                    bye_weeks.append(week)
-                
-                # Process each week 
                 for week in range(1, 19):
-                    if week in bye_weeks:
+                    # Find the prediction for this week
+                    week_data = qb_data[qb_data['Week'] == week]
+                    if not week_data.empty:
+                        row = week_data.iloc[0]
                         qb_weekly_data[week] = {
-                            'opponent': 'BYE',
-                            'predicted_points': 0.0,
-                            'is_bye': True
+                            'opponent': row['Opponent'],
+                            'predicted_points': row['Predicted_Fantasy_Points'],
+                            'is_bye': row['Opponent'] == 'BYE'
                         }
                     else:
-                        # Find the prediction for this week
-                        week_data = qb_data[qb_data['Week'] == week]
-                        if not week_data.empty:
-                            row = week_data.iloc[0]
-                            qb_weekly_data[week] = {
-                                'opponent': row['Opponent'],
-                                'predicted_points': row['Predicted_Fantasy_Points'],
-                                'is_bye': False
-                            }
-                        else:
-                            # No prediction data for this week
-                            qb_weekly_data[week] = {
-                                'opponent': 'TBD',
-                                'predicted_points': 0.0,
-                                'is_bye': False
-                            }
+                        # handle no prediction for this week
+                        qb_weekly_data[week] = {
+                            'opponent': 'TBD',
+                            'predicted_points': 0.0,
+                            'is_bye': False
+                        }
                 
                 comparison_data['qbs'][qb_name] = qb_weekly_data
                 # Add the pre-calculated total points

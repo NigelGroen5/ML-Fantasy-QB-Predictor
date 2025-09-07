@@ -182,6 +182,6 @@ df_clean['Season'] = df_clean['Date'].dt.year
 df_clean['QB'] = qb_name
 
 # Save cleaned data to CSV
-filename = qb_name.lower().replace(' ', '_') + '_complete_game_logs.csv'
+filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_game_logs.csv"
 df_clean.to_csv(filename, index=False)
 print(f"saved {len(df_clean)} games to {filename}")

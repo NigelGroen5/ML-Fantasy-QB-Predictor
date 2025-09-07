@@ -18,22 +18,7 @@ class QBFantasyPredictor:
         self.qb_avgs = None
         
     def calculate_qb_averages(self, historical_data: pd.DataFrame) -> dict:
-        """Calculate QB-specific averages from historical data"""
-        if len(historical_data) == 0:
-            # Default averages if no historical data
-            return {
-                'Completions': 22.0,
-                'Attempts': 34.0, 
-                'Pass_Yds': 250,
-                'Pass_TD': 1.7,
-                'INT': 0.8,
-                'Rush_Att': 3.5,
-                'Rush_Yds': 18,
-                'Rush_TD': 0.15,
-                'Fantasy_Points': 17.5
-            }
-        
-        # Calculate averages from historical data
+        """Calculate QB-specific averages from historical data"""    
         return {
             'Completions': historical_data['Completions'].mean(),
             'Attempts': historical_data['Attempts'].mean(), 
@@ -50,21 +35,12 @@ class QBFantasyPredictor:
         """Create predictive features"""
         data = data.sort_values("date").copy()
 
-        # check if defensive columns exist, if not create dummy ones
-        defensive_cols = ["Def_FantasyPts_Allowed_pg", "Def_Sacks_pg", "Def_PassYds_Allowed_pg", 
-                        "Def_PassTD_Allowed_pg", "Def_INT_Forced_pg"]
-        
-        for col in defensive_cols:
-            if col not in data.columns:
-                data[col] = 0
-        
         # basic game context
         data["season"] = data["Season"]
         data["week"] = data["Week"]
         data["is_playoff"] = (data["Week"] >= 17).astype(int)
         data["is_early_season"] = (data["Week"] <= 4).astype(int)
         data["is_late_season"] = (data["Week"] >= 14).astype(int)
-        data["is_home"] = 1  # Assume home games
         
         # Rolling averages for key stats
         for window in [3, 5, 10]:
@@ -143,24 +119,12 @@ class QBFantasyPredictor:
         """Preprocess QB data for training/prediction"""
         data = data.copy()
         
-        # Handle date column - fix for dates with time components
-        if "Date" in data.columns:
-            # Handle dates that might have time components
-            try:
-                data["date"] = pd.to_datetime(data["Date"], errors='coerce')
-                # If parsing fails, try extracting just the date part
-                if data["date"].isna().any():
-                    # Try extracting just the date part before any space
-                    data["date"] = pd.to_datetime(data["Date"].str.split().str[0], errors='coerce')
-            except:
-                data["date"] = pd.to_datetime(data["Season"].astype(str) + "-" + data["Week"].astype(str) + "-01")
-        elif "date" not in data.columns:
-            data["date"] = pd.to_datetime(data["Season"].astype(str) + "-" + data["Week"].astype(str) + "-01")
+        # Handle date column 
+        data["date"] = pd.to_datetime(data["Season"].astype(int), format="%Y") + pd.to_timedelta(data["Week"].astype(int) - 1, unit="W")
                 
         #Create opponent code if Opponent column exists 
         if "Opponent" in data.columns and "opp_code" not in data.columns:
             data["opp_code"] = data["Opponent"].astype("category").cat.codes
-        
         data["hour"] = 12  
         data["day_code"] = data["date"].dt.dayofweek
         
@@ -168,7 +132,7 @@ class QBFantasyPredictor:
         if "Fantasy_Points" in data.columns:
             data["target"] = data["Fantasy_Points"]
         else:
-            data["target"] = 0  # Default 
+            data["target"] = 0  
 
         # Create all advanced features
         data = self.create_advanced_features(data)
@@ -176,7 +140,7 @@ class QBFantasyPredictor:
         all_features = [
             "opp_code", "hour", "day_code", "season", "week",
             # Game context
-            "is_playoff", "is_early_season", "is_late_season", "is_home",
+            "is_playoff", "is_early_season", "is_late_season",
             # Rolling averages
             "fantasy_rolling_3", "fantasy_rolling_5", "fantasy_rolling_10",
             "pass_yds_rolling_3", "pass_yds_rolling_5", "pass_yds_rolling_10",
@@ -314,6 +278,21 @@ class QBFantasyPredictor:
         results["Predicted_Fantasy_Points"] = predictions
         results = results.sort_values("Week")
         
+        # Handle bye weeks 
+        all_weeks = set(range(1, 19))  
+        existing_weeks = set(results["Week"].values)
+        bye_weeks = all_weeks - existing_weeks
+        
+        for bye_week in bye_weeks:
+            bye_row = pd.DataFrame({
+                "Week": [bye_week],
+                "Opponent": ["BYE"],
+                "Predicted_Fantasy_Points": [0.0]
+            })
+            results = pd.concat([results, bye_row], ignore_index=True)
+        
+        results = results.sort_values("Week").reset_index(drop=True)
+        
         return results
     
     def evaluate_model(self, test_data: pd.DataFrame) -> dict:
@@ -339,7 +318,7 @@ class QBFantasyPredictor:
         processed_data, all_features = self.preprocess_data(qb_data, is_training=True)
         
         if len(processed_data) < 20:
-            raise ValueError("Insufficient training data. Need at least 20 games.")
+            raise ValueError("Not enough training data. Need at least 20 games.")
         
         # Calculate QB-specific averages from historical data
         self.qb_avgs = self.calculate_qb_averages(qb_data)
@@ -377,27 +356,21 @@ def predict_qb_fantasy_points(qb_data: pd.DataFrame, qb_name: str, season_year: 
     return predictions
 
 if __name__ == "__main__":
-    try:
-        #PICK QB NAME HERE
-        qb_name = "Josh Allen"  
-        data_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
+    #PICK QB NAME HERE
+    qb_name = "Josh Allen"  
+    data_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
         
-        # Load complete dataset
-        complete_data = pd.read_csv(data_filename)
+    # Load complete dataset
+    complete_data = pd.read_csv(data_filename)
         
-        # Make predictions for 2025
-        predictions = predict_qb_fantasy_points(complete_data, qb_name, 2025)
+    # Make predictions for 2025
+    predictions = predict_qb_fantasy_points(complete_data, qb_name, 2025)
         
-        # Save predictions
-        output_filename = f"data/predictions/{qb_name.lower().replace(' ', '_')}_2025_predictions.csv"
-        predictions.to_csv(output_filename, index=False)
-        print(f"\nPredictions saved to '{output_filename}'")
+    # Save predictions
+    output_filename = f"data/predictions/{qb_name.lower().replace(' ', '_')}_2025_predictions.csv"
+    predictions.to_csv(output_filename, index=False)
+    print(f"\nPredictions saved to '{output_filename}'")
         
-        # Show detailed predictions
-        print(f"\n{qb_name} 2025 Predictions:")
-        print(predictions.to_string(index=False))
-        
-    except Exception as e:
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
+    # Show detailed predictions
+    print(f"\n{qb_name} 2025 Predictions:")
+    print(predictions.to_string(index=False))
