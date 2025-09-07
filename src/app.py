@@ -31,6 +31,14 @@ class QBDataManager:
             filename = os.path.basename(file_path)
             qb_name = filename.replace("_2025_predictions.csv", "").replace("_", " ").title()
             
+            # Fix qb names
+            qb_name_mapping = {
+                'Mahomes': 'Patrick Mahomes',
+                'Mathew Stafford': 'Matthew Stafford',
+                'Cj Stroud': 'C.J. Stroud'
+            }
+            qb_name = qb_name_mapping.get(qb_name, qb_name)
+            
             # Load predictions
             df = pd.read_csv(file_path)
             self.qb_predictions[qb_name] = df
@@ -63,7 +71,6 @@ class QBDataManager:
             if qb_name in self.qb_predictions:
                 qb_data = self.qb_predictions[qb_name]
                 qb_weekly_data = {}
-                
                 for week in range(1, 19):
                     # Find the prediction for this week
                     week_data = qb_data[qb_data['Week'] == week]
