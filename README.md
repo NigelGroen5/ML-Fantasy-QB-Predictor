@@ -1,6 +1,8 @@
 ## About
 This project analyzes and predicts NFL quarterback performance by combining quarterback statistics with defensive matchup data. The system uses historical data and current season information to forecast how QBs will perform against specific defenses in the 2025 season.
 
+You can check the project out here: https://ml-fantasy-qb-predictor.onrender.com/ (Note it may take a couple minutes to run)
+
 ## Why this project
 As an avid sports lover, over the last few years I’ve gotten really into fantasy football, soccer, and basketball. Fantasy means a lot to me considering every year there is money and a brutal punishment for the loser on the line. Last year, I lost my fantasy football league and had to run a milk mile as punishment (The milk mile is a challenge where you drink a gallon of milk and then run a mile):
 <div style="display: flex; gap: 10px; align-items: center;">
