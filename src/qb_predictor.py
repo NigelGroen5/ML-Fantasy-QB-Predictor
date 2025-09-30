@@ -207,7 +207,6 @@ class QBFantasyPredictor:
             'reg_alpha': [0, 0.1],
             'reg_lambda': [0, 0.1]
         }
-        
         xgb_grid = GridSearchCV(
             xgb.XGBRegressor(random_state=42), 
             xgb_params, 
@@ -360,7 +359,7 @@ if __name__ == "__main__":
     qb_name = "Josh Allen"  
     data_filename = f"data/{qb_name.lower().replace(' ', '_')}_complete_data.csv"
         
-    # Load complete dataset
+    # Load  dataset
     complete_data = pd.read_csv(data_filename)
         
     # Make predictions for 2025

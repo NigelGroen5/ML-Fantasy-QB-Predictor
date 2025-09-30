@@ -84,9 +84,9 @@ class QBDataManager:
                     else:
                         # handle no prediction for this week
                         qb_weekly_data[week] = {
-                            'opponent': 'TBD',
+                            'opponent': 'BYE',
                             'predicted_points': 0.0,
-                            'is_bye': False
+                            'is_bye': True
                         }
                 
                 comparison_data['qbs'][qb_name] = qb_weekly_data
